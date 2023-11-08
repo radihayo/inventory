@@ -1,0 +1,2 @@
+# inventory
+ Aplikasi Inventory Sederhana
