@@ -15,13 +15,12 @@ class masukController extends Controller
      */
     public function index()
     {
-        $data_barang_masuk = masukModel::with('barang')->orderBy('tanggal_masuk', 'asc')->get();
         $data_barang = barangModel::orderBy('nama', 'asc')->get();
-        return view('transaksi_barang.barang_masuk.masuk', ['data' => $data_barang_masuk, 'data_barang' => $data_barang, 'title' => 'Barang Masuk']);
+        return view('transaksi_barang.barang_masuk.masuk', ['data_barang' => $data_barang, 'title' => 'Barang Masuk']);
     }
     public function read()
     {
-        $data_barang_masuk = masukModel::with('barang')->orderBy('tanggal_masuk', 'asc')->get();
+        $data_barang_masuk = masukModel::with('barang')->orderBy('tanggal_masuk', 'desc')->get();
         return response()->json(['data' => $data_barang_masuk]);
     }
     /**
@@ -65,7 +64,7 @@ class masukController extends Controller
         ];
         barangModel::where('id', $id_stock)->update($update_stock);
 
-        return Response::json($data_store);
+        return Response::json($data_barang);
     }
 
     /**

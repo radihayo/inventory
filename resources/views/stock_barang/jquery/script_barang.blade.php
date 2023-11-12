@@ -105,7 +105,6 @@ $(document).ready(function() {
 
     $('body').on('click', '#btn_edit_barang', function() {
         let id = $(this).data('id');
-        console.log(id);
         $.get('barang/' + id + '/edit', function(data) {
             $('#edit_barang').modal('show');
             $('#id').val(data.id);

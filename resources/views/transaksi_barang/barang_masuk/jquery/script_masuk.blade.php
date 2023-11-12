@@ -120,7 +120,7 @@ $(document).ready(function() {
                 }else{
                     Toast.fire({
                         icon: 'success',
-                        title: 'Data Dengan Nama Barang '+nama_tambah+' Berhasil Ditambahkan'
+                        title: 'Data Dengan Nama Barang '+response.nama+' Berhasil Ditambahkan'
                     });
                     $("#quickForm")[0].reset();
                     $('#add_masuk').modal('hide');
@@ -198,16 +198,15 @@ $(document).ready(function() {
                             "_token": token
                         },
                         success:function(response){
-                            console.log(response);
                             if (response.status == "error") {
                                 Toast.fire({
                                 icon: 'error',
-                                title: 'Data '+id_jumlah_restore+' Gagal Dihapus Karena Jumlah Stock Kurang'
+                                title: 'Data '+nama_hapus+' Gagal Dihapus Karena Jumlah Stock Kurang'
                             });
                             } else {
                                 Toast.fire({
                                 icon: 'success',
-                                title: 'Data Dengan Nama Barang '+id_jumlah_restore+' Berhasil Dihapus'
+                                title: 'Data Dengan Nama Barang '+nama_hapus+' Berhasil Dihapus'
                             });
                             table.ajax.reload(); 
                             }

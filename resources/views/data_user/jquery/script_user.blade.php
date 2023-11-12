@@ -67,12 +67,15 @@ $(document).ready(function() {
             data: 'alamat',
         },{
             render: function(data, type, row) {                
-                return '<div class="project-actions"><button type="button" class="btn btn-primary" id="btn_edit_user"' +
+                return '<div class="btn-group"><button type="button" class="btn btn-primary" id="btn_edit_user"' +
                     'data-id="' + row['id'] +
-                    '"><i class="fas fa-edit"></i></button>' +
+                    '"><i class="fas fa-edit"></i></button>' + 
                     '<button type="button" class="btn btn-danger" id="btn_delete_user"' +
                     'data-id="' + row['id'] + '"data-nama="' + row['nama'] + '"data-email="' + row['email'] +
-                    '"><i class="fas fa-trash"></i></button></div>'                    
+                    '"><i class="fas fa-trash"></i></button>' +
+                    '<button type="button" class="btn btn-warning" id="btn_reset_user"' +
+                    'data-id="' + row['id'] + '"data-nama="' + row['nama'] + '"data-email="' + row['email'] + '"data-no_telp="' + row['no_telp'] +
+                    '"><i class="fas fa-undo-alt"></i></button></div>'                    
             },
         }],
         columnDefs: [{
@@ -241,6 +244,41 @@ $(document).ready(function() {
                             Toast.fire({
                                 icon: 'success',
                                 title: 'Data Dengan Nama User '+nama_hapus+' Berhasil Dihapus'
+                            });
+                            table.ajax.reload(); 
+                        }
+                    });  
+                }
+            })
+    });
+
+    $('body').on('click', '#btn_reset_user', function () {
+        let nama_reset = $(this).data("nama");
+        let email = $(this).data("email");
+        let no_telp = $(this).data("no_telp");
+        let token = $("meta[name='csrf-token']").attr("content");
+        Swal.fire({
+            title: 'Apakah Anda Yakin?',
+            text: "Ingin Mereset Password "+nama_reset+" ?",
+            icon: 'warning',
+            showCancelButton: true,
+            cancelButtonText: 'Tidak',
+            confirmButtonText: 'Ya'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: "PUT",
+                        url: "{{ route('user.reset_password') }}",
+                        cache: false,
+                        data: {
+                            "email":email,
+                            "no_telp":no_telp,
+                            "_token": token
+                        },
+                        success:function(response){
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Data Password Dengan Nama User '+nama_reset+' Berhasil Direset'
                             });
                             table.ajax.reload(); 
                         }

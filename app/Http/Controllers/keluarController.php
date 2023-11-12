@@ -21,7 +21,7 @@ class keluarController extends Controller
     }
     public function read()
     {
-        $data_barang_keluar = keluarModel::with('barang')->orderBy('tanggal_keluar', 'asc')->get();
+        $data_barang_keluar = keluarModel::with('barang')->orderBy('tanggal_keluar', 'desc')->get();
         return response()->json(['data' => $data_barang_keluar]);
     }
     /**
@@ -79,7 +79,7 @@ class keluarController extends Controller
         ];
         barangModel::where('id', $id_stock)->update($update_stock);
 
-        return Response::json($data_store);
+        return Response::json($data_barang);
     }
 
     /**

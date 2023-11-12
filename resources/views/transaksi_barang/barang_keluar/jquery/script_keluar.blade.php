@@ -119,7 +119,7 @@ $(document).ready(function() {
                 }else{
                     Toast.fire({
                         icon: 'success',
-                        title: 'Data Dengan Jenis Barang '+id_barang_add+' Berhasil Ditambahkan'
+                        title: 'Data Dengan Nama Barang '+response.nama+' Berhasil Ditambahkan'
                     });
                     $("#quickForm")[0].reset();
                     $('#add_keluar').modal('hide');

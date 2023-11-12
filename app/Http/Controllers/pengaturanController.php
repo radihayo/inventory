@@ -46,17 +46,23 @@ class pengaturanController extends Controller
     public function upload(Request $request)
     {
         $data_user = userModel::where('email', Auth::user()->username)->firstOrFail();
-        $validator = Validator::make($request->all(), [
-            'image' => 'required',
-        ], [
-            'required' => 'Gambar Belum Diupload'
-        ]);
+        $imageName = Auth::user()->data_akun->nama . '-' . uniqid() . '.jpg';
+        if (Auth::user()->data_akun->foto == null) {
+            $folderPath = public_path('storage/foto/');
+            $image_parts = explode(";base64,", $request->image);
+            $image_type_aux = explode("image/", $image_parts[0]);
+            $image_type_aux[1];
+            $image_base64 = base64_decode($image_parts[1]);
+            $imageFullPath = $folderPath . $imageName;
+            file_put_contents($imageFullPath, $image_base64);
 
-        if ($validator->fails()) {
-            return response()->json(['status' => 'error', 'message' => $validator->errors()]);
+            $data = [
+                'foto'     => $imageName
+            ];
+            $data_update = userModel::where('id', $data_user->id)->update($data);
         } else {
-            $imageName = Auth::user()->data_akun->nama . '-' . uniqid() . '.jpg';
-            if (Auth::user()->data_akun->foto == null) {
+            if (Storage::disk('public')->exists('foto/' . $data_user->foto)) {
+                Storage::delete('foto/' . $data_user->foto);
                 $folderPath = public_path('storage/foto/');
                 $image_parts = explode(";base64,", $request->image);
                 $image_type_aux = explode("image/", $image_parts[0]);
@@ -69,24 +75,9 @@ class pengaturanController extends Controller
                     'foto'     => $imageName
                 ];
                 $data_update = userModel::where('id', $data_user->id)->update($data);
-            } else {
-                if (Storage::disk('public')->exists('foto/' . $data_user->foto)) {
-                    Storage::delete('foto/' . $data_user->foto);
-                    $folderPath = public_path('storage/foto/');
-                    $image_parts = explode(";base64,", $request->image);
-                    $image_type_aux = explode("image/", $image_parts[0]);
-                    $image_type_aux[1];
-                    $image_base64 = base64_decode($image_parts[1]);
-                    $imageFullPath = $folderPath . $imageName;
-                    file_put_contents($imageFullPath, $image_base64);
-
-                    $data = [
-                        'foto'     => $imageName
-                    ];
-                    $data_update = userModel::where('id', $data_user->id)->update($data);
-                }
             }
         }
+
         return Response::json($data_update);
     }
     /**
@@ -131,23 +122,6 @@ class pengaturanController extends Controller
         $data_edit  = userModel::where($where)->first();
         return Response::json($data_edit);
     }
-
-    // public function imageCropPost(Request $request)
-    // {
-    //     $data = $request->image;
-
-    //     list($type, $data) = explode(';', $data);
-    //     list(, $data)      = explode(',', $data);
-
-    //     $data = base64_decode($data);
-    //     $image_name = time() . '.png';
-    //     $path = public_path() . "/images/" . $image_name;
-
-    //     file_put_contents($path, $data);
-
-    //     return response()->json(['status' => 1, 'message' => "Image uploaded successfully"]);
-    // }
-
     /**
      * Update the specified resource in storage.
      */

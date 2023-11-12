@@ -16,7 +16,6 @@ $(document).ready(function() {
   "Juli","Agustus","September","Oktober","November","Desember"];
   let month = new Date();
   let get_month = all_month[month.getMonth()-1];
-//   console.log(get_month);
 
   let labels_value = [];
   for (let backward = 0; backward <= 5; backward++) {

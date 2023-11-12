@@ -54,6 +54,7 @@ Route::resource('/satuan', satuanController::class)->middleware(['auth', 'all'])
 Route::get('/lokasi/read', [lokasiController::class, 'read'])->name('lokasi.read')->middleware(['auth', 'all']);
 Route::resource('/lokasi', lokasiController::class)->middleware(['auth', 'all']);
 
+Route::put('/user/reset_password', [userController::class, 'reset_password'])->name('user.reset_password')->middleware(['auth', 'admin']);
 Route::get('/user/read', [userController::class, 'read'])->name('user.read')->middleware(['auth', 'admin']);
 Route::resource('/user', userController::class)->middleware(['auth', 'admin']);
 

@@ -32,21 +32,8 @@ $(document).ready(function() {
       });
     }
 
- 
-    $('body').on('click', '#btn_edit_password', function () {
-        $('#edit_password').modal('show');
-    });
-    // $('body').on('click', '#btn_edit_password', function() {
-    //     let id = $(this).data('id');
-    //     $.get('pengaturan/edit_password/' + id , function(data) {
-    //         $('#edit_password').modal('show');
-    //         $('#id').val(data.id);
-    //     })
-    // });
-
     $('body').on('click', '#btn_edit_data', function() {
         let id = $(this).data('id');
-        // $.get('pengaturan/edit_data/' + id , function(data) {
         $.get('pengaturan/' + id + '/edit', function(data){
             $('#edit_data').modal('show');
             $('#id').val(data.id);
@@ -59,6 +46,10 @@ $(document).ready(function() {
             $('#no_telp_update').val(data.no_telp);
             $('#alamat_update').val(data.alamat);
         })
+    });
+
+    $('body').on('click', '#btn_edit_password', function () {
+        $('#edit_password').modal('show');
     });
 
     $('#update_password').click(function() {      
@@ -151,16 +142,27 @@ $(document).ready(function() {
         });
     });
 
+    $(document).on('click', '#import_photo', function () {
+        $('#images')[0].click();
+    });
 
-    $('body').on('click', '#btn_edit_foto', function () {
-        // createCroppie();
-        $('#edit_foto').modal('show');
+    $('#images').change(function () {
+        if (this.files[0] == undefined)
+            return;
+            $('#edit_foto').modal('show');
+            let reader = new FileReader();
+            reader.addEventListener("load", function () {
+                window.src = reader.result;
+                $('#images').val('');
+            }, false);
+            if (this.files[0]) {
+                reader.readAsDataURL(this.files[0]);
+            }
     });
 
     let resize;
-    function createCroppie(){
-        //nggawe kanvas
-        resize = $('#upload-demo').croppie({
+    $('#edit_foto').on('shown.bs.modal', function () {
+        resize = $('#canvas').croppie({
             enableExif: true,
             enableOrientation: true,    
             viewport: { 
@@ -169,37 +171,23 @@ $(document).ready(function() {
                 type: 'square'
             },   
             boundary: {
-                width: 250,
-                height: 250
+                width: 300,
+                height: 300
             }
         });
-        //input img ng kanvas
-        $('#image').on('change', function () { 
-            let reader = new FileReader();
-            reader.onload = function (e) {
-                resize.croppie('bind',{
-                    url: e.target.result
-                });
-            }
-            reader.readAsDataURL(this.files[0]);
+        resize.croppie('bind', {
+            url: window.src,
+        }).then(function () {
+        resize.croppie('setZoom', 0);
         });
-    }
+    });
 
-    // function remove_image(){
-        $("#edit_foto").on("hidden.bs.modal",function(){
-            // $('#upload-demo').removeClass('croppie-container');
-            $('#upload-demo').croppie('destroy');
-            // $("#upload-demo").empty();
-            // $("#upload-demo").html("");
-            $("#image").val("");
-            // $('#upload-demo').croppie('bind',{url : ''});
-            // new Croppie(document.getElementById("image"), resize);
-            // resize.croppie('bind', {url : ''});
-        })
-    // }
+    $('#edit_foto').on('hidden.bs.modal', function () {
+        resize.croppie('destroy');
+    });
 
     $('#upload-image').on('click', function (ev) {
-        let token   = $("meta[name='csrf-token']").attr("content");
+        let token = $("meta[name='csrf-token']").attr("content");
         resize.croppie('result', {
             type: 'canvas',
             size: 'viewport'
@@ -212,38 +200,14 @@ $(document).ready(function() {
                     "_token": token
                 },
                 success: function (data) {
-                    if (data.status == "error") {
-                        $.each(data.message, function(key, value) {
-                            let id = "#" + key + "-error";
-                            // fokus input invalid
-                            $('#' + key).addClass('is-invalid');
-
-                            //add invalid to div id=foto-error
-                            $(id).addClass('invalid-feedback d-block');
-                            $(id).text(data.message[key][0]);
-
-                            setTimeout(function() {
-                                $("#" + key + "-error").removeClass('d-block');
-                                $('#' + key).removeClass('is-invalid');
-                            }, 3000)
-                        });                    
-                    } else {
-                        Toast.fire({
-                            icon: 'success',
-                            title: 'Gambar Berhasil Diupload'
-                        })
-                        $('#edit_foto').modal('hide');
-                        // remove_image();
-                        // createCroppie();
-                        $('#upload-demo').croppie('destroy');
-                        $("#image").val("");
-                        reloadFoto();
-                        reloadFoto_sidebar();
-                        // $('#upload-demo').croppie('bind');
-                        // resize.croppie('bind', {url : ''});
-                        // $('#upload-demo').croppie(opts);
-                        // $('#upload-demo').croppie(method, args);
-                    }
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Gambar Berhasil Diupload'
+                    })
+                    $('#edit_foto').modal('hide');
+                    reloadFoto();
+                    reloadFoto_sidebar();
+                    
                 }
             });
         });

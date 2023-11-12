@@ -31,6 +31,18 @@ class userController extends Controller
             ->get();
         return response()->json(['data' => $data_user]);
     }
+    public function reset_password(Request $request)
+    {
+        $email = $request->email;
+        $data_role = akunModel::where('username', $email)->firstOrFail();
+        // akunModel::where('id', $data_role->id)->delete();
+
+        $data = [
+            'password'     => Hash::make($request->no_telp),
+        ];
+        $data_update = akunModel::where('id', $data_role->id)->update($data);
+        return Response::json($data_role);
+    }
     /**
      * Show the form for creating a new resource.
      */
